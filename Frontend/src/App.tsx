@@ -19,15 +19,7 @@ function App() {
 		} else {
 			navigate(`/${pageRoutes.PRODUCT}`);
 		}
-	}, [isLoggedIn]);
-	// useEffect(() => {
-	// 	if (isLoggedIn) {
-	// 		getUser();
-	// 	} else {
-	// 		signinRedirect();
-	// 	}
-	// }, [isLoggedIn]);
-
+	}, [isLoggedIn, dispatch, navigate]);
 	return (
 		<Fragment>
 			<Header></Header>

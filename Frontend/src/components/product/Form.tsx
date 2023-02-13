@@ -40,7 +40,7 @@ export const PmProductForm = ({ data, formState, handleClose, performPostApiCall
 	const methods = useForm<IFormInput>({ resolver: yupResolver(productFormSchema) });
 	useEffect(() => {
 		methods.setValue('isCreate', formState);
-	}, []);
+	}, [formState, methods]);
 	const onSubmitHandler: SubmitHandler<IFormInput> = (data: IFormInput) => {
 		const product: NewProductDto = {
 			name: data.name,

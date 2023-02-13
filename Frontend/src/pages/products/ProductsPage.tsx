@@ -19,7 +19,7 @@ const ProductsPage = () => {
 		dispatch(requestFetchingProducts());
 		dispatch(requestFetchingBrands());
 		dispatch(requestFetchingCategories());
-	}, []);
+	}, [dispatch]);
 
 	const performPostApiCall = () => {
 		handleOpenSnackbar(

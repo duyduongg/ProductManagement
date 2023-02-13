@@ -9,7 +9,7 @@ export function Header() {
 	const user: UserDto = useAppSelector((state) => state.userState.user);
 	useEffect(() => {
 		dispatch(userActions.requestSettingUser());
-	}, []);
+	}, [dispatch]);
 	return (
 		<header>
 			<div className={classes.container}>
