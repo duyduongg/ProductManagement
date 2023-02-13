@@ -1,0 +1,9 @@
+.container {
+	display: flex !important;
+	justify-self: right;
+	margin-right: 3rem;
+	color: black;
+	.user-avatar {
+		justify-self: center;
+	}
+}

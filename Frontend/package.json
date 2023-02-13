@@ -1,0 +1,74 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@hookform/resolvers": "^2.9.10",
+    "@loadable/component": "^5.15.3",
+    "@mui/icons-material": "^5.11.0",
+    "@mui/material": "^5.11.0",
+    "@mui/x-data-grid": "^5.17.14",
+    "@reduxjs/toolkit": "^1.9.1",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/loadable__component": "^5.13.4",
+    "@types/node": "^16.11.59",
+    "@types/react": "^18.0.20",
+    "@types/react-dom": "^18.0.6",
+    "@types/react-redux": "^7.1.24",
+    "@types/redux-saga": "^0.10.5",
+    "autonumeric": "^4.6.0",
+    "axios": "^1.2.1",
+    "dotenv": "^16.0.3",
+    "guid-typescript": "^1.0.9",
+    "jwt-decode": "^3.1.2",
+    "oidc-client": "^1.11.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.41.1",
+    "react-icons": "^4.4.0",
+    "react-number-format": "^5.1.2",
+    "react-redux": "^8.0.5",
+    "react-router-dom": "^6.5.0",
+    "react-scripts": "5.0.1",
+    "redux-persist": "^6.0.0",
+    "redux-saga": "^1.2.1",
+    "sass": "^1.54.9",
+    "typescript": "^4.8.3",
+    "web-vitals": "^2.1.4",
+    "yup": "^0.32.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "dotenv-webpack": "^8.0.1",
+    "prettier": "2.7.1",
+    "typescript-plugin-css-modules": "^3.4.0"
+  }
+}

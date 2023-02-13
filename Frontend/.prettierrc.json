@@ -1,0 +1,32 @@
+{
+  "arrowParens": "always",
+  "bracketSameLine": false,
+  "bracketSpacing": true,
+  "embeddedLanguageFormatting": "auto",
+  "htmlWhitespaceSensitivity": "css",
+  "insertPragma": false,
+  "jsxBracketSameLine": false,
+  "jsxSingleQuote": false,
+  "printWidth": 120,
+  "proseWrap": "preserve",
+  "quoteProps": "as-needed",
+  "requirePragma": false,
+  "semi": true,
+  "singleQuote": true,
+  "trailingComma": "none",
+  "useTabs": true,
+  "vueIndentScriptAndStyle": false,
+  "tabWidth": 2,
+  "overrides": [
+    {
+      "files": [
+        "*.mts",
+        "*.cts",
+        "*.ts"
+      ],
+      "options": {
+        "parser": "typescript"
+      }
+    }
+  ]
+}
