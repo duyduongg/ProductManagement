@@ -82,6 +82,11 @@ namespace ProductManagement.Services
                 result = result.Where(p => p.BrandId == request.Filter.BrandId);
             }
 
+            if(request.Filter.Name != String.Empty)
+            {
+                result = result.Where(p => EF.Functions.FreeText(p.Name, request.Filter.Name));
+            }
+
             return await result
                 .Select(r => new ProductDto
                 {

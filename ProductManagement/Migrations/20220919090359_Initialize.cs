@@ -108,6 +108,12 @@ namespace ProductManagement.Migrations
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
+            migrationBuilder.Sql(
+                sql: "CREATE FULLTEXT CATALOG ftCatalog AS DEFAULT;",
+                suppressTransaction: true);
+            migrationBuilder.Sql(
+                sql: "CREATE FULLTEXT INDEX ON Products(Name) KEY INDEX PK_Products;",
+                suppressTransaction: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
