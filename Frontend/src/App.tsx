@@ -19,7 +19,7 @@ function App() {
 		} else {
 			navigate(`/${pageRoutes.PRODUCT}`);
 		}
-	}, [isLoggedIn, dispatch, navigate]);
+	}, [isLoggedIn]);
 	return (
 		<Fragment>
 			<Header></Header>

@@ -1,22 +1,33 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Button } from '@mui/material';
+import ClearIcon from '@mui/icons-material/Clear';
+import SearchIcon from '@mui/icons-material/Search';
+import { Box, Button, IconButton, InputAdornment, TextField, Tooltip } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'app/hook';
 import { requestFetchingBrands } from 'app/reducers/brandSlice';
 import { requestFetchingCategories } from 'app/reducers/categorySlice';
 import { requestFetchingProducts } from 'app/reducers/productSlice';
 import { PmProductForm } from 'components/product/Form';
 import { PmDataTable, PmDialog, PmSnackbar } from 'components/shared/components';
-import { ROLE } from '../../constants/index';
 import { useSnackbar } from 'hooks/index';
 import { useDialog } from 'hooks/useDialog';
+import { ProductDto, Request } from 'models/index';
 import { useEffect } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { ROLE } from '../../constants/index';
 import classes from './ProductsPage.module.scss';
+
+export interface ISearchInput {
+	value: string;
+}
+
 const ProductsPage = () => {
 	const { open, handleClick, handleClose } = useDialog();
 	const dispatch = useAppDispatch();
 	const { openSnackbar, message, handleOpenSnackbar, handleCloseSnackbar } = useSnackbar();
 	const { isError, createdOrUpdatedProductName } = useAppSelector((state) => state.productDetailState);
 	const userRole = useAppSelector((state) => state.userState.user.role);
+	const { register, handleSubmit, watch, setValue } = useForm<ISearchInput>({ defaultValues: { value: '' } });
+	const requestFilterDto: Request<ProductDto> = useAppSelector((state) => state.productState.request);
 	useEffect(() => {
 		dispatch(requestFetchingProducts());
 		dispatch(requestFetchingBrands());
@@ -32,18 +43,70 @@ const ProductsPage = () => {
 		handleClose();
 	};
 
+	const handleSearchProducts: SubmitHandler<ISearchInput> = (data: ISearchInput) => {
+		console.log(data.value);
+		const request = {
+			dataSourceRequest: requestFilterDto.dataSourceRequest,
+			filter: {
+				...requestFilterDto.filter,
+				name: data.value
+			}
+		} as Request<ProductDto>;
+		dispatch(requestFetchingProducts(request));
+	};
+
+	const handleClearButtonVisibility = () => {
+		return watch('value') !== '' ? 'visible' : 'hidden';
+	};
+
+	const handleClearInputValue = () => {
+		setValue('value', '');
+	};
+
 	const { result } = useAppSelector((state) => state.productState);
 	return (
 		<Box sx={{ overflowY: 'hidden', display: 'grid', flexDirection: 'column' }}>
-			<Button
-				variant="contained"
-				onClick={handleClick}
-				className={classes['create-button']}
-				startIcon={<AddIcon />}
-				sx={userRole.includes(ROLE.MANAGER) || userRole.includes(ROLE.ADMIN) === false ? { visibility: 'hidden' } : {}}
-			>
-				Create
-			</Button>
+			<Box sx={{ display: 'flex', flexDirection: 'row', justifySelf: 'end', marginTop: '2rem', marginRight: '10rem' }}>
+				<form onSubmit={handleSubmit(handleSearchProducts)}>
+					<TextField
+						sx={{ m: 1, width: '50ch' }}
+						{...register('value')}
+						className={classes['search-box']}
+						variant="standard"
+						autoComplete="off"
+						placeholder="Search"
+						InputProps={{
+							endAdornment: (
+								<InputAdornment position="end">
+									<Tooltip title="Clear" placeholder="bottom" arrow sx={{ visibility: handleClearButtonVisibility }}>
+										<IconButton className={classes['form-action-button']} onClick={handleClearInputValue}>
+											<ClearIcon />
+										</IconButton>
+									</Tooltip>
+									<Tooltip title="Search by name" placement="bottom" arrow>
+										<IconButton onClick={handleSubmit(handleSearchProducts)} className={classes['form-action-button']}>
+											<SearchIcon />
+										</IconButton>
+									</Tooltip>
+								</InputAdornment>
+							)
+						}}
+					></TextField>
+				</form>
+
+				<Button
+					variant="contained"
+					onClick={handleClick}
+					className={classes['create-button']}
+					startIcon={<AddIcon />}
+					sx={
+						userRole.includes(ROLE.MANAGER) || userRole.includes(ROLE.ADMIN) === false ? { visibility: 'hidden' } : {}
+					}
+				>
+					Create
+				</Button>
+			</Box>
+
 			{result?.data && <PmDataTable data={result?.data} total={result?.total}></PmDataTable>}
 			<PmDialog onClose={handleClose} open={open} title="Create product" style={{ padding: '1rem 1.5rem' }}>
 				<PmProductForm formState={true} handleClose={handleClose} performPostApiCall={performPostApiCall} />
