@@ -1,16 +1,26 @@
-import { Box, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
+import { Box, Checkbox, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
 import { visuallyHidden } from '@mui/utils';
 import { Order, ProductDto } from 'models';
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import { headCells } from '../../../../constants';
 
 interface DataTableHeadProps {
 	onRequestSort: (event: React.MouseEvent<unknown>, property: keyof ProductDto) => void;
 	order: Order;
 	orderBy: string;
+	numSelect: number;
+	rowCount: number;
+	onSelectAllClick: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const DataTableHead = ({ onRequestSort, order, orderBy }: DataTableHeadProps) => {
+export const DataTableHead = ({
+	onRequestSort,
+	order,
+	orderBy,
+	numSelect,
+	rowCount,
+	onSelectAllClick
+}: DataTableHeadProps) => {
 	const labelOrder = order === 1 ? 'asc' : 'desc';
 	const createSortHandler = (property: keyof ProductDto) => (event: React.MouseEvent<unknown>) => {
 		onRequestSort(event, property);
@@ -19,6 +29,14 @@ export const DataTableHead = ({ onRequestSort, order, orderBy }: DataTableHeadPr
 	return (
 		<TableHead>
 			<TableRow>
+				<TableCell padding="checkbox">
+					<Checkbox
+						color="primary"
+						indeterminate={numSelect > 0 && numSelect < rowCount}
+						checked={rowCount > 0 && numSelect === rowCount}
+						onChange={onSelectAllClick}
+					/>
+				</TableCell>
 				{headCells.map((headCell) => (
 					<TableCell
 						key={headCell.id}
