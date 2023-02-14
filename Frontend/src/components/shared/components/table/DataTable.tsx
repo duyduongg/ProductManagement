@@ -32,6 +32,7 @@ import { useDialog, useSnackbar } from 'hooks';
 import { PmSnackbar } from 'components/shared/components';
 import { productDetailActions } from 'app/reducers/productDetailSlice';
 import { PmDialog } from '../dialog/Dialog';
+import { ROLE } from '../../../../constants';
 export interface TableProps {
 	data: ProductDto[];
 	total: number;
@@ -55,7 +56,7 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 	const [selectedProduct, setSelectedProduct] = useState<ProductDto>();
 	const { isError, createdOrUpdatedProductName } = useAppSelector((state) => state.productDetailState);
 	const { openSnackbar, message, handleOpenSnackbar, handleCloseSnackbar } = useSnackbar();
-
+	const userRole: string[] = useAppSelector((state) => state.userState.user.role);
 	const calculateEmptyRows = useCallback(() => {
 		const totalPages = Math.ceil(total / rowsPerPage);
 		setEmptyRows(page === totalPages - 1 ? rowsPerPage - data.length : 0);
@@ -155,7 +156,11 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 					</IconButton>
 				</Tooltip>
 				<Tooltip title="Delete" placement="bottom" arrow>
-					<IconButton size="small" onClick={() => handleOpenRemoveDialog(item)}>
+					<IconButton
+						size="small"
+						onClick={() => handleOpenRemoveDialog(item)}
+						sx={userRole.includes(ROLE.ADMIN) === true ? { visibility: 'visible' } : {}}
+					>
 						<DeleteIcon fontSize="inherit" />
 					</IconButton>
 				</Tooltip>

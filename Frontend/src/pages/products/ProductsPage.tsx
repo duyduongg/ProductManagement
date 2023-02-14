@@ -6,6 +6,7 @@ import { requestFetchingCategories } from 'app/reducers/categorySlice';
 import { requestFetchingProducts } from 'app/reducers/productSlice';
 import { PmProductForm } from 'components/product/Form';
 import { PmDataTable, PmDialog, PmSnackbar } from 'components/shared/components';
+import { ROLE } from '../../constants/index';
 import { useSnackbar } from 'hooks/index';
 import { useDialog } from 'hooks/useDialog';
 import { useEffect } from 'react';
@@ -15,6 +16,7 @@ const ProductsPage = () => {
 	const dispatch = useAppDispatch();
 	const { openSnackbar, message, handleOpenSnackbar, handleCloseSnackbar } = useSnackbar();
 	const { isError, createdOrUpdatedProductName } = useAppSelector((state) => state.productDetailState);
+	const userRole = useAppSelector((state) => state.userState.user.role);
 	useEffect(() => {
 		dispatch(requestFetchingProducts());
 		dispatch(requestFetchingBrands());
@@ -33,7 +35,13 @@ const ProductsPage = () => {
 	const { result } = useAppSelector((state) => state.productState);
 	return (
 		<Box sx={{ overflowY: 'hidden', display: 'grid', flexDirection: 'column' }}>
-			<Button variant="contained" onClick={handleClick} className={classes['create-button']} startIcon={<AddIcon />}>
+			<Button
+				variant="contained"
+				onClick={handleClick}
+				className={classes['create-button']}
+				startIcon={<AddIcon />}
+				sx={userRole.includes(ROLE.MANAGER) || userRole.includes(ROLE.ADMIN) === false ? { visibility: 'hidden' } : {}}
+			>
 				Create
 			</Button>
 			{result?.data && <PmDataTable data={result?.data} total={result?.total}></PmDataTable>}
