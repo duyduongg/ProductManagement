@@ -10,7 +10,6 @@ export interface ProductDetailState {
 	creatingOrUpdatingProductErrorMessage: string;
 	stockingProductErrorMessage: string;
 	checkingProductNameErrorMessage: string;
-	removingProductErrorMessage: string;
 	isNameDuplicated: boolean;
 	createdOrUpdatedProductName: string;
 }
@@ -75,17 +74,6 @@ const productDetailSlice = createSlice({
 			state.isProcessing = false;
 			state.isError = true;
 			state.checkingProductNameErrorMessage = action.payload;
-		},
-		requestRemovingProduct: (state, action: PayloadAction<string>) => {
-			state.isProcessing = true;
-		},
-		completeRemovingProduct: (state) => {
-			state.isProcessing = false;
-		},
-		failedRemovingProduct: (state, action: PayloadAction<string>) => {
-			state.isProcessing = false;
-			state.isError = true;
-			state.removingProductErrorMessage = action.payload;
 		}
 	}
 });
@@ -99,10 +87,7 @@ export const {
 	failedCreatingOrUpdatingProduct,
 	requestStockingProduct,
 	completeStockingProduct,
-	failedStockingProduct,
-	requestRemovingProduct,
-	completeRemovingProduct,
-	failedRemovingProduct
+	failedStockingProduct
 } = productDetailSlice.actions;
 export const productDetailActions = productDetailSlice.actions;
 export const productDetailState = productDetailSlice.reducer;

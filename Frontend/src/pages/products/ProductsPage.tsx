@@ -24,14 +24,19 @@ const ProductsPage = () => {
 	const { open, handleClick, handleClose } = useDialog();
 	const dispatch = useAppDispatch();
 	const { openSnackbar, message, handleOpenSnackbar, handleCloseSnackbar } = useSnackbar();
-	const { isError, createdOrUpdatedProductName } = useAppSelector((state) => state.productDetailState);
-	const userRole = useAppSelector((state) => state.userState.user.role);
 	const { register, handleSubmit, watch, setValue } = useForm<ISearchInput>({ defaultValues: { value: '' } });
+
+	const isLoggedIn = useAppSelector((state) => state.authState.isAuthenticated);
+	const { isError, createdOrUpdatedProductName } = useAppSelector((state) => state.productDetailState);
 	const requestFilterDto: Request<ProductDto> = useAppSelector((state) => state.productState.request);
+	const userRole = useAppSelector((state) => state.userState.user.role);
+
 	useEffect(() => {
-		dispatch(requestFetchingProducts());
-		dispatch(requestFetchingBrands());
-		dispatch(requestFetchingCategories());
+		if (isLoggedIn) {
+			dispatch(requestFetchingProducts());
+			dispatch(requestFetchingBrands());
+			dispatch(requestFetchingCategories());
+		}
 	}, [dispatch]);
 
 	const performPostApiCall = () => {
@@ -73,7 +78,8 @@ const ProductsPage = () => {
 						{...register('value')}
 						className={classes['search-box']}
 						variant="standard"
-						autoComplete="off"
+						autoComplete="on"
+						inputRef={(input) => input && input.focus()}
 						placeholder="Search"
 						InputProps={{
 							endAdornment: (

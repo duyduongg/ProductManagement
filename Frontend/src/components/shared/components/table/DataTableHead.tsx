@@ -30,12 +30,12 @@ export const DataTableHead = ({
 		<TableHead>
 			<TableRow>
 				<TableCell padding="checkbox">
-					<Checkbox
+					{/* <Checkbox
 						color="primary"
 						indeterminate={numSelect > 0 && numSelect < rowCount}
 						checked={rowCount > 0 && numSelect === rowCount}
 						onChange={onSelectAllClick}
-					/>
+					/> */}
 				</TableCell>
 				{headCells.map((headCell) => (
 					<TableCell

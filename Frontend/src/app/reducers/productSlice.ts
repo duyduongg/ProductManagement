@@ -11,6 +11,7 @@ export interface ProductState {
 	errorMessage: string;
 	result: ResponseResult<ProductDto>;
 	request: Request<ProductDto>;
+	removingProductErrorMessage: string;
 }
 
 export const requestInitialState: Request<ProductDto> = {
@@ -41,7 +42,8 @@ const productSlice = createSlice({
 		request: requestInitialState,
 		errorMessage: '',
 		isError: false,
-		isSuccess: false
+		isSuccess: false,
+		removingProductErrorMessage: ''
 	} as ProductState,
 	reducers: {
 		requestFetchingProducts: (state, action: PayloadAction<Request<ProductDto> | undefined>) => {
@@ -58,6 +60,17 @@ const productSlice = createSlice({
 			state.isError = true;
 			state.isSuccess = false;
 			state.errorMessage = action.payload;
+		},
+		requestRemovingProduct: (state, action: PayloadAction<string[]>) => {
+			state.isLoading = true;
+		},
+		completeRemovingProduct: (state) => {
+			state.isLoading = false;
+		},
+		failedRemovingProduct: (state, action: PayloadAction<string>) => {
+			state.isLoading = false;
+			state.isError = true;
+			state.removingProductErrorMessage = action.payload;
 		}
 	}
 });

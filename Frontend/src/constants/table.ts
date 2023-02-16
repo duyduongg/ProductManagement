@@ -38,7 +38,7 @@ export interface ProductTableHeadCell {
 }
 
 export const headCells: readonly ProductTableHeadCell[] = [
-	{ id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+	{ id: 'name', numeric: false, disablePadding: false, label: 'Name' },
 	{ id: 'brand', numeric: false, disablePadding: false, label: 'Brand' },
 	{ id: 'category', numeric: false, disablePadding: false, label: 'Category' },
 	{ id: 'price', numeric: true, disablePadding: false, label: 'Price' },
