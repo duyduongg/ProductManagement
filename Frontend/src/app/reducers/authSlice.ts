@@ -8,6 +8,7 @@ interface AuthState {
 	errorMessage: string;
 	user: User | null;
 	isAuthenticated: boolean;
+	authLocalTime: Date;
 }
 
 const authSlice = createSlice({
@@ -33,6 +34,7 @@ const authSlice = createSlice({
 		setAuthInfo: (state, action: PayloadAction<User>) => {
 			state.user = action.payload;
 			state.isAuthenticated = true;
+			state.authLocalTime = new Date();
 		}
 	}
 });
@@ -40,7 +42,7 @@ const authSlice = createSlice({
 const authPersistConfig = {
 	key: 'auth',
 	storage,
-	whitelist: ['user', 'isAuthenticated']
+	whitelist: ['user', 'isAuthenticated', 'authLocalTime']
 };
 
 export const { requestSignin, completeSignin, failedSignin } = authSlice.actions;

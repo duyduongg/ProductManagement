@@ -113,13 +113,13 @@ function* watchCheckProductNameDuplication() {
 	}
 }
 
-function* removeProduct(productId: string) {
+function* removeProduct(productsId: string[]) {
 	try {
-		yield call(productService.removeProductAsync, productId);
+		yield call(productService.removeProductAsync, productsId);
 		yield call(fetchingProducts);
 	} catch (error) {
 		if (error instanceof Error) {
-			yield put(productDetailActions.failedRemovingProduct(error.message));
+			yield put(productActions.failedRemovingProduct(error.message));
 		} else {
 			console.error(error);
 		}
@@ -128,7 +128,7 @@ function* removeProduct(productId: string) {
 
 function* watchRemoveProduct() {
 	while (true) {
-		const action: PayloadAction<string> = yield take(productDetailActions.requestRemovingProduct.type);
+		const action: PayloadAction<string[]> = yield take(productActions.requestRemovingProduct.type);
 		yield call(removeProduct, action.payload);
 	}
 }

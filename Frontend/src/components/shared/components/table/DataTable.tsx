@@ -213,7 +213,7 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 
 	return (
 		<>
-			{isLoading && <CircularProgress />}
+			{isLoading && <CircularProgress className={classes['progress']} />}
 			{!isLoading && (
 				<Box sx={{ overflow: 'hidden' }}>
 					<TableContainer className={classes.container}>
@@ -240,7 +240,7 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 									<TablePagination
 										className={classes.pagination}
 										rowsPerPageOptions={tableRowsPerPage}
-										colSpan={productTableColumns.length + 1}
+										colSpan={productTableColumns.length + 2}
 										count={total}
 										rowsPerPage={rowsPerPage}
 										page={page}

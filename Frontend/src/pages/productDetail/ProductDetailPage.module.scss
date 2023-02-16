@@ -1,6 +1,20 @@
 .product_container {
-	width: 800px;
-	height: 400px;
+	width: 70rem;
 	margin: 3rem auto;
-	background-color: #dfdfdf;
+	background-color: #d4d4d4;
+	padding: 1rem;
+	font-family: 'Roboto Condensed', sans-serif !important;
+}
+
+.card-content {
+	display: grid;
+	grid-template-columns: 22.5rem 45rem;
+	column-gap: 1rem;
+	font-family: inherit;
+}
+
+.product-img {
+	width: 22.5rem;
+	height: 22.5rem;
+	object-fit: cover;
 }

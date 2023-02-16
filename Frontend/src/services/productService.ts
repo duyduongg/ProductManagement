@@ -11,8 +11,8 @@ export const productService = {
 		const response = await api.get(`${apiRoutes.PRODUCTS}?productId=${productId}`);
 		return response?.data as ProductDto;
 	},
-	async removeProductAsync(productId: string): Promise<void> {
-		await api.delete(`${apiRoutes.PRODUCTS}?productId=${productId}`);
+	async removeProductAsync(productsId: string[]): Promise<void> {
+		await api.delete(`${apiRoutes.PRODUCTS}`, productsId);
 	},
 	async createOrUpdateProductAsync(request: NewProductDto): Promise<void> {
 		await api.put(`${apiRoutes.PRODUCTS}/${apiRoutes.NEW}`, request);
