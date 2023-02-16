@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Guid } from 'guid-typescript';
 import { ProductDto, Request, ResponseResult } from 'models';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 export interface ProductState {
 	isLoading: boolean;
@@ -11,29 +13,32 @@ export interface ProductState {
 	request: Request<ProductDto>;
 }
 
+export const requestInitialState: Request<ProductDto> = {
+	dataSourceRequest: {
+		take: 10,
+		skip: 0,
+		sorts: [{ field: 'Name', order: 1 }]
+	},
+	filter: {
+		id: Guid.createEmpty().toString(),
+		name: '',
+		price: 0,
+		warrantyMonth: 0,
+		stock: 0,
+		thumbnail: '',
+		brandId: Guid.createEmpty().toString(),
+		categoryId: Guid.createEmpty().toString(),
+		brand: '',
+		category: ''
+	}
+};
+
 const productSlice = createSlice({
 	name: 'product',
 	initialState: {
 		isLoading: false,
 		result: {},
-		request: {
-			dataSourceRequest: {
-				take: 10,
-				skip: 0,
-				sorts: [{ field: 'Name', order: 1 }]
-			},
-			filter: {
-				id: Guid.createEmpty().toString(),
-				name: '',
-				price: 0,
-				stock: 0,
-				thumbnail: '',
-				brandId: Guid.createEmpty().toString(),
-				categoryId: Guid.createEmpty().toString(),
-				brand: '',
-				category: ''
-			}
-		},
+		request: requestInitialState,
 		errorMessage: '',
 		isError: false,
 		isSuccess: false
@@ -57,6 +62,12 @@ const productSlice = createSlice({
 	}
 });
 
+const productPersistConfig = {
+	key: 'product',
+	storage,
+	whitelist: ['request']
+};
+
 export const { requestFetchingProducts, completeFetchingProducts, failedFetchingProducts } = productSlice.actions;
 export const productActions = productSlice.actions;
-export const productState = productSlice.reducer;
+export const productState = persistReducer(productPersistConfig, productSlice.reducer);

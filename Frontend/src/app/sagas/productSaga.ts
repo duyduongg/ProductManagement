@@ -1,7 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { appSelect } from 'app/hook';
 import { productDetailActions } from 'app/reducers/productDetailSlice';
-import { productActions } from 'app/reducers/productSlice';
+import { productActions, requestInitialState } from 'app/reducers/productSlice';
 import { NewProductDto, ProductDetailDto, ProductDto, ResponseResult, StockDto } from 'models';
 import { all, call, fork, put, take } from 'redux-saga/effects';
 import { productService } from 'services/productService';
@@ -54,7 +54,7 @@ function* createOrUpdateProduct(product: NewProductDto) {
 	try {
 		yield call(productService.createOrUpdateProductAsync, product);
 		yield put(productDetailActions.completeCreatingOrUpdatingProduct(product.name));
-		yield fetchingProducts();
+		yield put(productActions.requestFetchingProducts(requestInitialState));
 	} catch (error: any) {
 		if (error instanceof Error) {
 			yield put(productDetailActions.failedCreatingOrUpdatingProduct(error.message));
