@@ -13,7 +13,7 @@ namespace ProductManagement.Services
         public Task<ProductDetailDto> GetProductDetailAsync(Guid productId);
         public Task CreateOrUpdateProductAsync(ProductDetailDto dto);
         public Task<ProductDetailDto> StockProductAsync(StockDto dto);
-        public Task RemoveProductAsync(Guid productId);
+        public Task RemoveProductAsync(List<Guid> productIds);
         public Task<bool> CheckDuplicatedProductNameAsync(string name);
 
     }

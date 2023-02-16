@@ -202,16 +202,22 @@ namespace ProductManagement.Services
             return await _context.Products.AnyAsync(p => comparer.Compare(p.Name, name) == 0);
         }
 
-        public async Task RemoveProductAsync(Guid productId)
+        public async Task RemoveProductAsync(List<Guid> productIds)
         {
-            if (!Helper.CheckGuidValidity(productId))
+            foreach(Guid id in productIds)
             {
-                _logger.LogError($"Product with Id = {productId} is not valid");
-                throw new ProductIdInvalidException("Product identifier not valid");
+                if (!Helper.CheckGuidValidity(id))
+                {
+                    _logger.LogError($"Product with Id = {productIds} is not valid");
+                    throw new ProductIdInvalidException("Product identifier not valid");
+                }
             }
 
-            var product = await _context.Products.Where(p => p.Id == productId).FirstOrDefaultAsync();
-            _context.Products.Remove(product);
+            var products = await _context.Products.Where(p => productIds.Contains(p.Id)).ToListAsync();
+
+            if (products.Count == 0) return;
+
+            _context.Products.RemoveRange(products);
             await _context.SaveChangesAsync();
         }
         private ProductDetailDto ConvertProductToProductDetailDto(Product product)

@@ -76,11 +76,11 @@ namespace ProductManagement.Controllers
         }
 
         // DELETE: /Products?productId=
-        [HttpDelete]
+        [HttpPost]
         [RolesAuthorize(Roles.Admin)]
-        public async Task<ActionResult> RemoveProductAsync(Guid productId)
+        public async Task<ActionResult> RemoveProductAsync([FromBody] List<Guid> productIds)
         {
-            await _service.RemoveProductAsync(productId);
+            await _service.RemoveProductAsync(productIds);
             return Ok();
         }
     }
