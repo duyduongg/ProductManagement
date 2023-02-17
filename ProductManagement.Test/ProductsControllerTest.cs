@@ -263,21 +263,21 @@ namespace ProductManagement.Test
         }
 
         [Test]
-        public void Delete_RemoveProductAsync_Throws_ProductNotFoundException()
+        public void Delete_RemoveProductsAsync_Throws_ProductNotFoundException()
         {
             using var context = new ShopDbContext(_dbContextOptions);
 
-            Assert.ThrowsAsync<ProductIdInvalidException>(async () => await _controller.RemoveProductAsync(Guid.Empty));
+            Assert.ThrowsAsync<ProductIdInvalidException>(async () => await _controller.RemoveProductAsync(new List<Guid>() { Guid.Empty }));
         }
 
         [Test]
         public async Task Delete_RemoveProductAsync_Success()
         {
             using var context = new ShopDbContext(_dbContextOptions);
-            var anyProductId = await context.Products.Select(p => p.Id).FirstOrDefaultAsync();
-
-            await _controller.RemoveProductAsync(anyProductId);
-            Assert.AreEqual(false, await context.Products.AnyAsync(p => p.Id == anyProductId));
+            var guids = await context.Products.Select(p => p.Id).Take(3).ToListAsync();
+            var count = await context.Products.CountAsync();
+            await _controller.RemoveProductAsync(guids);
+            Assert.AreEqual(0, await context.Products.Where(p => guids.Contains(p.Id)).CountAsync());
         }
     }
 }
