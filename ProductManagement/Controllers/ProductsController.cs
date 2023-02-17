@@ -76,7 +76,8 @@ namespace ProductManagement.Controllers
         }
 
         // POST: /Products/Remove
-        [HttpPost("/Remove")]
+        [HttpPost]
+        [Route("Remove")]
         [RolesAuthorize(Roles.Admin)]
         public async Task<ActionResult> RemoveProductAsync([FromBody] List<Guid> productIds)
         {
