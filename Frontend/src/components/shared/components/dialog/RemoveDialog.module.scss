@@ -1,0 +1,18 @@
+.action-buttons {
+	font-family: 'Roboto Condensed', sans-serif;
+	font-weight: 700;
+	margin-right: 1rem;
+	background-color: #d4d4d4;
+	color: black;
+	:nth-child(2) {
+		margin-left: 1rem;
+	}
+	&:hover {
+		background-color: #c4c4c4;
+	}
+}
+.dialog-content {
+	font-family: 'Roboto Condensed', sans-serif;
+	font-size: 1.15em;
+	color: black;
+}

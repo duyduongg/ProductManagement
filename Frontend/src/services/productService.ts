@@ -12,7 +12,7 @@ export const productService = {
 		return response?.data as ProductDto;
 	},
 	async removeProductAsync(productsId: string[]): Promise<void> {
-		await api.post(`${apiRoutes.PRODUCTS}`, productsId);
+		await api.post(`${apiRoutes.PRODUCTS}/${apiRoutes.REMOVE}`, productsId);
 	},
 	async createOrUpdateProductAsync(request: NewProductDto): Promise<void> {
 		await api.put(`${apiRoutes.PRODUCTS}/${apiRoutes.NEW}`, request);

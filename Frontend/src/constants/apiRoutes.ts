@@ -3,6 +3,7 @@ export const apiRoutes = {
 	NEW: 'New',
 	RATE: 'Rate',
 	NAME: 'Name',
+	REMOVE: 'Remove',
 	STOCK: 'Stock',
 	BRANDS: 'Brands',
 	CATEGORIES: 'Categories'

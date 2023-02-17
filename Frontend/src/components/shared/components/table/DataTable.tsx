@@ -1,6 +1,10 @@
+import CreateIcon from '@mui/icons-material/Create';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
 	Box,
 	Button,
+	Checkbox,
+	CircularProgress,
 	DialogActions,
 	DialogContent,
 	DialogContentText,
@@ -12,29 +16,25 @@ import {
 	TableFooter,
 	TablePagination,
 	TableRow,
-	Tooltip,
-	CircularProgress,
-	Checkbox
+	Tooltip
 } from '@mui/material';
 import { getSortableField } from 'app/helpers/isSortable';
 import { useAppDispatch, useAppSelector } from 'app/hook';
-import { requestFetchingProducts } from 'app/reducers/productSlice';
-import { pageRoutes } from 'constants/apiRoutes';
-import { ProductDto } from 'models';
-import React, { ChangeEvent, ReactNode, useCallback, useEffect, useState, MouseEvent } from 'react';
-import { useNavigate } from 'react-router';
-import { productTableColumns, tableRowsPerPage } from '../../../../constants';
-import CreateIcon from '@mui/icons-material/Create';
-import DeleteIcon from '@mui/icons-material/Delete';
-import classes from './DataTable.module.scss';
-import { DataTableHead } from './DataTableHead';
-import { TablePaginationActions } from './TablePaginationActions';
+import { productActions, requestFetchingProducts } from 'app/reducers/productSlice';
 import { PmProductForm } from 'components/product/Form';
-import { useDialog, useSnackbar } from 'hooks';
 import { PmSnackbar } from 'components/shared/components';
-import { productDetailActions } from 'app/reducers/productDetailSlice';
+import { pageRoutes } from 'constants/apiRoutes';
+import { useDialog, useSnackbar } from 'hooks';
+import { ProductDto } from 'models';
+import React, { ChangeEvent, MouseEvent, ReactNode, useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { productTableColumns, ROLE, tableRowsPerPage } from '../../../../constants';
 import { PmDialog } from '../dialog/Dialog';
-import { ROLE } from '../../../../constants';
+import { PmRemoveDialog } from '../dialog/RemoveDialog';
+import classes from './DataTable.module.scss';
+import { PmDataTableHead } from './DataTableHead';
+import { PmDataTableToolbar } from './DataTableToolbar';
+import { TablePaginationActions } from './TablePaginationActions';
 export interface TableProps {
 	data: ProductDto[];
 	total: number;
@@ -44,23 +44,26 @@ export interface TableProps {
 export const PmDataTable = ({ data, total, children }: TableProps) => {
 	const request = useAppSelector((state) => state.productState.request);
 	const isLoading = useAppSelector((state) => state.productState.isLoading);
+	const { isError, createdOrUpdatedProductName } = useAppSelector((state) => state.productDetailState);
+	const userRole: string[] = useAppSelector((state) => state.userState.user.role);
+
 	const [selected, setSelected] = useState<readonly string[]>([]);
-	const dispatch = useAppDispatch();
-	const navigate = useNavigate();
 	const [page, setPage] = useState(0);
 	const [rowsPerPage, setRowsPerPage] = useState(10);
 	const [emptyRows, setEmptyRows] = useState(0);
 	const [sorts, setSorts] = useState(request.dataSourceRequest.sorts);
+	const [selectedProduct, setSelectedProduct] = useState<ProductDto | null>(null);
+
+	const dispatch = useAppDispatch();
+	const navigate = useNavigate();
 	const { open, handleClick, handleClose } = useDialog();
 	const {
 		open: openRemoveDialog,
 		handleClick: handleClickRemoveDialog,
 		handleClose: handleCloseRemoveDialog
 	} = useDialog();
-	const [selectedProduct, setSelectedProduct] = useState<ProductDto>();
-	const { isError, createdOrUpdatedProductName } = useAppSelector((state) => state.productDetailState);
 	const { openSnackbar, message, handleOpenSnackbar, handleCloseSnackbar } = useSnackbar();
-	const userRole: string[] = useAppSelector((state) => state.userState.user.role);
+
 	const calculateEmptyRows = useCallback(() => {
 		const totalPages = Math.ceil(total / rowsPerPage);
 		setEmptyRows(page === totalPages - 1 ? rowsPerPage - data.length : 0);
@@ -121,6 +124,10 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 		handleClickRemoveDialog();
 	};
 
+	const handleOpenRemoveMultiProductDialog = () => {
+		handleClickRemoveDialog();
+	};
+
 	const performPostApiCall = () => {
 		handleOpenSnackbar(
 			isError
@@ -133,12 +140,18 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 	const isSelected = (id: string) => selected.indexOf(id) !== -1;
 
 	const handleRemoveProduct = () => {
-		dispatch(productDetailActions.requestRemovingProduct(selectedProduct!.id));
+		dispatch(productActions.requestRemovingProduct([selectedProduct?.id] as string[]));
 		handleOpenSnackbar(
 			isError
 				? `An error occur when remove product name ${selectedProduct?.name}`
 				: `${selectedProduct?.name} has been removed from list`
 		);
+		console.log('Remove 1 product');
+		handleCloseRemoveDialog();
+	};
+
+	const handleRemoveMultipleProducts = () => {
+		dispatch(productActions.requestRemovingProduct(selected as string[]));
 		handleCloseRemoveDialog();
 	};
 
@@ -217,9 +230,12 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 			{!isLoading && (
 				<Box sx={{ overflow: 'hidden' }}>
 					<TableContainer className={classes.container}>
-						{children}
+						<PmDataTableToolbar
+							numSelected={selected.length}
+							openConfirmDialogHandler={handleOpenRemoveMultiProductDialog}
+						/>
 						<Table stickyHeader sx={{ minWidth: 500 }}>
-							<DataTableHead
+							<PmDataTableHead
 								rowCount={data.length}
 								numSelect={selected.length}
 								onSelectAllClick={handleSelectAllClick}
@@ -259,32 +275,17 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 						</Table>
 						<PmDialog onClose={handleClose} open={open} title="Update product" style={{ padding: '1rem 1.5rem' }}>
 							<PmProductForm
-								data={selectedProduct}
+								data={selectedProduct!!}
 								formState={false}
 								handleClose={handleClose}
 								performPostApiCall={performPostApiCall}
 							/>
 						</PmDialog>
-						<PmDialog
-							onClose={handleCloseRemoveDialog}
-							open={openRemoveDialog}
-							title="Delete product"
-							style={{ padding: '1rem 1rem' }}
-						>
-							<DialogContent>
-								<DialogContentText id="dialog-content-text" className={classes['dialog-content']}>
-									Are you sure you want to delete this product?
-								</DialogContentText>
-							</DialogContent>
-							<DialogActions>
-								<Button onClick={handleCloseRemoveDialog} className={classes['action-buttons']}>
-									No
-								</Button>
-								<Button onClick={handleRemoveProduct} className={classes['action-buttons']}>
-									Yes
-								</Button>
-							</DialogActions>
-						</PmDialog>
+						<PmRemoveDialog
+							closeHandler={handleCloseRemoveDialog}
+							isOpen={openRemoveDialog}
+							confirmHandler={selectedProduct === null ? handleRemoveMultipleProducts : handleRemoveProduct}
+						/>
 					</TableContainer>
 					<PmSnackbar
 						handleClose={handleCloseSnackbar}

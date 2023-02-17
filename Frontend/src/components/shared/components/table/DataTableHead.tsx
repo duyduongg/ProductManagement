@@ -4,7 +4,7 @@ import { Order, ProductDto } from 'models';
 import React, { ChangeEvent } from 'react';
 import { headCells } from '../../../../constants';
 
-interface DataTableHeadProps {
+interface PmDataTableHeadProps {
 	onRequestSort: (event: React.MouseEvent<unknown>, property: keyof ProductDto) => void;
 	order: Order;
 	orderBy: string;
@@ -13,14 +13,14 @@ interface DataTableHeadProps {
 	onSelectAllClick: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const DataTableHead = ({
+export const PmDataTableHead = ({
 	onRequestSort,
 	order,
 	orderBy,
 	numSelect,
 	rowCount,
 	onSelectAllClick
-}: DataTableHeadProps) => {
+}: PmDataTableHeadProps) => {
 	const labelOrder = order === 1 ? 'asc' : 'desc';
 	const createSortHandler = (property: keyof ProductDto) => (event: React.MouseEvent<unknown>) => {
 		onRequestSort(event, property);
@@ -30,12 +30,12 @@ export const DataTableHead = ({
 		<TableHead>
 			<TableRow>
 				<TableCell padding="checkbox">
-					{/* <Checkbox
+					<Checkbox
 						color="primary"
 						indeterminate={numSelect > 0 && numSelect < rowCount}
 						checked={rowCount > 0 && numSelect === rowCount}
 						onChange={onSelectAllClick}
-					/> */}
+					/>
 				</TableCell>
 				{headCells.map((headCell) => (
 					<TableCell
