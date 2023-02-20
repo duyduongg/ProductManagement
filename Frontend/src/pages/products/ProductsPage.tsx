@@ -13,6 +13,7 @@ import { useDialog } from 'hooks/useDialog';
 import { ProductDto, Request } from 'models/index';
 import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { ROLE } from '../../constants/index';
 import classes from './ProductsPage.module.scss';
 
@@ -25,6 +26,7 @@ const ProductsPage = () => {
 	const dispatch = useAppDispatch();
 	const { openSnackbar, message, handleOpenSnackbar, handleCloseSnackbar } = useSnackbar();
 	const { register, handleSubmit, watch, setValue } = useForm<ISearchInput>({ defaultValues: { value: '' } });
+	const { t } = useTranslation();
 
 	const isLoggedIn = useAppSelector((state) => state.authState.isAuthenticated);
 	const { isError, createdOrUpdatedProductName } = useAppSelector((state) => state.productDetailState);
@@ -42,8 +44,8 @@ const ProductsPage = () => {
 	const performPostApiCall = () => {
 		handleOpenSnackbar(
 			isError
-				? `An error occured when create product name ${createdOrUpdatedProductName}`
-				: `Successfully update product name ${createdOrUpdatedProductName}`
+				? t('createProductFailure', { productName: createdOrUpdatedProductName })
+				: t('createProductSuccess', { productName: createdOrUpdatedProductName })
 		);
 		handleClose();
 	};
@@ -80,7 +82,7 @@ const ProductsPage = () => {
 						variant="standard"
 						autoComplete="on"
 						inputRef={(input) => input && input.focus()}
-						placeholder="Search"
+						placeholder={t('search') || ''}
 						InputProps={{
 							endAdornment: (
 								<InputAdornment position="end">
@@ -89,7 +91,7 @@ const ProductsPage = () => {
 											<ClearIcon />
 										</IconButton>
 									</Tooltip>
-									<Tooltip title="Search by name" placement="bottom" arrow>
+									<Tooltip title={t('searchHint')} placement="bottom" arrow>
 										<IconButton onClick={handleSubmit(handleSearchProducts)} className={classes['form-action-button']}>
 											<SearchIcon />
 										</IconButton>
@@ -109,12 +111,14 @@ const ProductsPage = () => {
 						userRole.includes(ROLE.MANAGER) || userRole.includes(ROLE.ADMIN) === false ? { visibility: 'hidden' } : {}
 					}
 				>
-					Create
+					{t('create')}
 				</Button>
 			</Box>
 
-			{result?.data && <PmDataTable data={result?.data} total={result?.total}></PmDataTable>}
-			<PmDialog onClose={handleClose} open={open} title="Create product" style={{ padding: '1rem 1.5rem' }}>
+			{result?.data && (
+				<PmDataTable data={result?.data} total={result?.total} labelRowsPerPage={t('tableRowsPerPage')}></PmDataTable>
+			)}
+			<PmDialog onClose={handleClose} open={open} title={t('createProductTitle')} style={{ padding: '1rem 1.5rem' }}>
 				<PmProductForm formState={true} handleClose={handleClose} performPostApiCall={performPostApiCall} />
 			</PmDialog>
 			<PmSnackbar

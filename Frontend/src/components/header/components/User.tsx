@@ -5,6 +5,7 @@ import { Fragment, MouseEvent, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import classes from './User.module.scss';
+import { useTranslation } from 'react-i18next';
 
 export interface UserProps {
 	user: UserDto;
@@ -19,6 +20,7 @@ const pickBgColor = () => {
 const bgColor = pickBgColor();
 
 export const User = ({ user }: UserProps) => {
+	const { t } = useTranslation();
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 	const open = Boolean(anchorEl);
 
@@ -90,12 +92,12 @@ export const User = ({ user }: UserProps) => {
 				className={classes['menu']}
 			>
 				<MenuItem>
-					Login as: <br /> {user?.userName ?? 'Username'}
+					{t('loginAs')} <br /> {user?.userName ?? 'Username'}
 				</MenuItem>
 				<Divider />
 				<MenuItem onClick={handleClose}>
 					<ListItemIcon>
-						<CloseIcon fontSize="small" sx={{ marginRight: '5px', marginTop: '2px' }} /> Close
+						<CloseIcon fontSize="small" sx={{ marginRight: '5px', marginTop: '2px' }} /> {t('close')}
 					</ListItemIcon>
 				</MenuItem>
 			</Menu>
