@@ -26,7 +26,7 @@ import { PmSnackbar } from 'components/shared/components';
 import { pageRoutes } from 'constants/apiRoutes';
 import { useDialog, useSnackbar } from 'hooks';
 import { ProductDto } from 'models';
-import React, { ChangeEvent, MouseEvent, ReactNode, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, ReactNode, Suspense, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { productTableColumns, ROLE, tableRowsPerPage } from '../../../../constants';
 import { PmDialog } from '../dialog/Dialog';
@@ -225,76 +225,73 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 	};
 
 	return (
-		<>
-			{isLoading && <CircularProgress className={classes['progress']} />}
-			{!isLoading && (
-				<Box sx={{ overflow: 'hidden' }}>
-					<TableContainer className={classes.container}>
-						<PmDataTableToolbar
-							numSelected={selected.length}
-							openConfirmDialogHandler={handleOpenRemoveMultiProductDialog}
-						/>
-						<Table stickyHeader sx={{ minWidth: 500 }}>
-							<PmDataTableHead
-								rowCount={data.length}
-								numSelect={selected.length}
-								onSelectAllClick={handleSelectAllClick}
-								order={sorts[0].order}
-								orderBy={sorts[0].field.toLowerCase()}
-								onRequestSort={handleRequestSort}
-							/>
-							<TableBody>
-								{data.map((item) => renderItem(item))}
-								{emptyRows > 0 && (
-									<TableRow style={{ height: 53 * emptyRows }}>
-										<TableCell colSpan={productTableColumns.length} />
-									</TableRow>
-								)}
-							</TableBody>
-							<TableFooter>
-								<TableRow>
-									<TablePagination
-										className={classes.pagination}
-										rowsPerPageOptions={tableRowsPerPage}
-										colSpan={productTableColumns.length + 2}
-										count={total}
-										rowsPerPage={rowsPerPage}
-										page={page}
-										SelectProps={{
-											inputProps: {
-												'aria-label': 'rows-per-page'
-											},
-											native: true
-										}}
-										onPageChange={handlePageChange}
-										onRowsPerPageChange={handleRowsPerPageChange}
-										ActionsComponent={TablePaginationActions}
-									/>
-								</TableRow>
-							</TableFooter>
-						</Table>
-						<PmDialog onClose={handleClose} open={open} title="Update product" style={{ padding: '1rem 1.5rem' }}>
-							<PmProductForm
-								data={selectedProduct!!}
-								formState={false}
-								handleClose={handleClose}
-								performPostApiCall={performPostApiCall}
-							/>
-						</PmDialog>
-						<PmRemoveDialog
-							closeHandler={handleCloseRemoveDialog}
-							isOpen={openRemoveDialog}
-							confirmHandler={selectedProduct === null ? handleRemoveMultipleProducts : handleRemoveProduct}
-						/>
-					</TableContainer>
-					<PmSnackbar
-						handleClose={handleCloseSnackbar}
-						open={openSnackbar}
-						severity={isError ? 'error' : 'success'}
-						message={message}
+		<Suspense fallback={<CircularProgress className={classes['progress']} />}>
+			<Box sx={{ overflow: 'hidden' }}>
+				<TableContainer className={classes.container}>
+					<PmDataTableToolbar
+						numSelected={selected.length}
+						openConfirmDialogHandler={handleOpenRemoveMultiProductDialog}
 					/>
-				</Box>
-			)}
-		</>
+					<Table stickyHeader sx={{ minWidth: 500 }}>
+						<PmDataTableHead
+							rowCount={data.length}
+							numSelect={selected.length}
+							onSelectAllClick={handleSelectAllClick}
+							order={sorts[0].order}
+							orderBy={sorts[0].field.toLowerCase()}
+							onRequestSort={handleRequestSort}
+						/>
+						<TableBody>
+							{data.map((item) => renderItem(item))}
+							{emptyRows > 0 && (
+								<TableRow style={{ height: 53 * emptyRows }}>
+									<TableCell colSpan={productTableColumns.length} />
+								</TableRow>
+							)}
+						</TableBody>
+						<TableFooter>
+							<TableRow>
+								<TablePagination
+									className={classes.pagination}
+									rowsPerPageOptions={tableRowsPerPage}
+									colSpan={productTableColumns.length + 2}
+									count={total}
+									rowsPerPage={rowsPerPage}
+									page={page}
+									SelectProps={{
+										inputProps: {
+											'aria-label': 'rows-per-page'
+										},
+										native: true
+									}}
+									onPageChange={handlePageChange}
+									onRowsPerPageChange={handleRowsPerPageChange}
+									ActionsComponent={TablePaginationActions}
+								/>
+							</TableRow>
+						</TableFooter>
+					</Table>
+					<PmDialog onClose={handleClose} open={open} title="Update product" style={{ padding: '1rem 1.5rem' }}>
+						<PmProductForm
+							data={selectedProduct!!}
+							formState={false}
+							handleClose={handleClose}
+							performPostApiCall={performPostApiCall}
+						/>
+					</PmDialog>
+					<PmRemoveDialog
+						closeHandler={handleCloseRemoveDialog}
+						isOpen={openRemoveDialog}
+						confirmHandler={selectedProduct === null ? handleRemoveMultipleProducts : handleRemoveProduct}
+					/>
+				</TableContainer>
+				<PmSnackbar
+					handleClose={handleCloseSnackbar}
+					open={openSnackbar}
+					severity={isError ? 'error' : 'success'}
+					message={message}
+				/>
+			</Box>
+		</Suspense>
 	);
 };
