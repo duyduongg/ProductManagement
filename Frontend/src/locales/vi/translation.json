@@ -12,6 +12,11 @@
     "delete": "Xóa",
     "loginAs": "Đăng nhập với: ",
     "close": "Đóng",
+    "language": "Ngôn ngữ",
+    "lang": [
+        "Tiếng Anh",
+        "Tiếng Việt"
+    ],
     "tableRowsPerPage": "Số sản phẩm mỗi trang",
     "tableToolBarsItemsSelected": "{{num}} sản phẩm được chọn",
     "productTableToolbarsTitle": "Danh sách sản phẩm",

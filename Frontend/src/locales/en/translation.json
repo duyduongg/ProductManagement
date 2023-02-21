@@ -12,6 +12,11 @@
     "delete": "Delete",
     "loginAs": "Log in as: ",
     "close": "Close",
+    "language": "Language",
+    "lang": [
+        "English",
+        "Vietnamese"
+    ],
     "tableRowsPerPage": "Rows per page",
     "tableToolBarsItemsSelected": "{{num}} selected",
     "productTableToolbarsTitle": "Products",
