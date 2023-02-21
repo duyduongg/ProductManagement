@@ -28,11 +28,9 @@ export const PmLanguageButton = () => {
 
 	const handleLanguageChange = (lang: string) => {
 		const chosenLanguage = formattedLanguages.find((obj) => obj.long === lang);
-		if (chosenLanguage?.short === i18n.language) {
-			handleClose();
-			return;
+		if (chosenLanguage?.short !== i18n.language) {
+			i18n.changeLanguage(chosenLanguage?.short);
 		}
-		i18n.changeLanguage(chosenLanguage?.short);
 		handleClose();
 	};
 
