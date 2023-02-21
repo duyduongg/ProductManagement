@@ -1,10 +1,10 @@
 # ProductManagement
 This is a personal project I built just to review what I've learnt about ReactJS and .NET Core
-Instruction:
+# Instruction:
 Backend:
-- Open ProductManagement.sln
+- Use Visual Studio to Open ProductManagement.sln
 - Set Startup Project as Multiple, choose IdentityServer and ProductManagement as startup projects
 - Ctrl F5 to run.
-Frontend:
+Frontend: Open folder Frontends with VS Code
 - Enter `npm install` to install necessary packages
 - Enter `npm run start` to run the project.
