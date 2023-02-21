@@ -5,22 +5,34 @@ export interface PmRemoveDialogProps {
 	closeHandler: () => void;
 	isOpen: boolean;
 	confirmHandler: () => void;
+	title: string;
+	contentText: string;
+	actionAccept: string;
+	actionRefuse: string;
 }
 
-export const PmRemoveDialog = ({ closeHandler, isOpen, confirmHandler }: PmRemoveDialogProps) => {
+export const PmRemoveDialog = ({
+	closeHandler,
+	isOpen,
+	confirmHandler,
+	title,
+	contentText,
+	actionAccept,
+	actionRefuse
+}: PmRemoveDialogProps) => {
 	return (
-		<PmDialog onClose={closeHandler} open={isOpen} title="Delete product" style={{ padding: '1rem 1rem' }}>
+		<PmDialog onClose={closeHandler} open={isOpen} title={title} style={{ padding: '1rem 1rem' }}>
 			<DialogContent>
 				<DialogContentText id="dialog-content-text" className={classes['dialog-content']}>
-					Are you sure you want to delete this product?
+					{contentText}
 				</DialogContentText>
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={closeHandler} className={classes['action-buttons']}>
-					No
+					{actionRefuse}
 				</Button>
 				<Button onClick={confirmHandler} className={classes['action-buttons']}>
-					Yes
+					{actionAccept}
 				</Button>
 			</DialogActions>
 		</PmDialog>

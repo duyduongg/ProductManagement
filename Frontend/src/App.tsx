@@ -4,6 +4,7 @@ import { authActions } from 'app/reducers/authSlice';
 import { pageRoutes } from 'constants/apiRoutes';
 import { ErrorPage } from 'pages/error/ErrorPage';
 import { Fragment, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Route, Routes, useNavigate } from 'react-router-dom';
 import { Header } from './components/header/Header';
 const ProductsPage = loadable(() => import('./pages/products/ProductsPage'));

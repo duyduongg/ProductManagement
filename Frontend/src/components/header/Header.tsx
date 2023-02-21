@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from 'app/hook';
 import { userActions } from 'app/reducers/userSlice';
+import { PmLanguageButton } from 'components/shared/components/langButton/LanguageButton';
 import { UserDto } from 'models/userDto';
 import { useEffect } from 'react';
 import { User } from './components/User';
@@ -13,6 +14,7 @@ export function Header() {
 	return (
 		<header>
 			<div className={classes.container}>
+				<PmLanguageButton />
 				<User user={user} />
 			</div>
 		</header>

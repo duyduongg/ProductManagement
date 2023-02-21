@@ -2,12 +2,8 @@ import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
 import {
 	Box,
-	Button,
 	Checkbox,
 	CircularProgress,
-	DialogActions,
-	DialogContent,
-	DialogContentText,
 	IconButton,
 	Table,
 	TableBody,
@@ -26,7 +22,8 @@ import { PmSnackbar } from 'components/shared/components';
 import { pageRoutes } from 'constants/apiRoutes';
 import { useDialog, useSnackbar } from 'hooks';
 import { ProductDto } from 'models';
-import React, { ChangeEvent, MouseEvent, ReactNode, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, MouseEvent, ReactNode, Suspense, useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { productTableColumns, ROLE, tableRowsPerPage } from '../../../../constants';
 import { PmDialog } from '../dialog/Dialog';
@@ -39,11 +36,12 @@ export interface TableProps {
 	data: ProductDto[];
 	total: number;
 	children?: ReactNode;
+	labelRowsPerPage: string;
 }
 
-export const PmDataTable = ({ data, total, children }: TableProps) => {
+export const PmDataTable = ({ data, total, children, labelRowsPerPage }: TableProps) => {
 	const request = useAppSelector((state) => state.productState.request);
-	const isLoading = useAppSelector((state) => state.productState.isLoading);
+	const { t } = useTranslation();
 	const { isError, createdOrUpdatedProductName } = useAppSelector((state) => state.productDetailState);
 	const userRole: string[] = useAppSelector((state) => state.userState.user.role);
 
@@ -131,8 +129,8 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 	const performPostApiCall = () => {
 		handleOpenSnackbar(
 			isError
-				? `An error occured when update product name ${createdOrUpdatedProductName}`
-				: `Successfully updated product name ${createdOrUpdatedProductName}`
+				? t('updateProductFailure', { productName: createdOrUpdatedProductName })
+				: t('updateProductSuccess', { productName: createdOrUpdatedProductName })
 		);
 		handleClose();
 	};
@@ -143,10 +141,9 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 		dispatch(productActions.requestRemovingProduct([selectedProduct?.id] as string[]));
 		handleOpenSnackbar(
 			isError
-				? `An error occur when remove product name ${selectedProduct?.name}`
-				: `${selectedProduct?.name} has been removed from list`
+				? t('removeProductFailure', { productName: selectedProduct?.name })
+				: t('removeProductSuccess', { productName: selectedProduct?.name })
 		);
-		console.log('Remove 1 product');
 		handleCloseRemoveDialog();
 	};
 
@@ -192,7 +189,7 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 								align={column.align}
 								width={column.minWidth}
 								onClick={() => navigateToProductDetailPage(item.id)}
-								className={classes.product_name}
+								className={classes['product-name']}
 							>
 								{value}
 							</TableCell>
@@ -205,12 +202,12 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 					);
 				})}
 				<TableCell id={item.id} width={20} align="center">
-					<Tooltip title="Update" placement="bottom" arrow>
+					<Tooltip title={t('update')} placement="bottom" arrow>
 						<IconButton size="small" onClick={() => handleOpenDialog(item)}>
 							<CreateIcon fontSize="inherit" />
 						</IconButton>
 					</Tooltip>
-					<Tooltip title="Delete" placement="bottom" arrow>
+					<Tooltip title={t('delete')} placement="bottom" arrow>
 						<IconButton
 							size="small"
 							onClick={() => handleOpenRemoveDialog(item)}
@@ -225,76 +222,83 @@ export const PmDataTable = ({ data, total, children }: TableProps) => {
 	};
 
 	return (
-		<>
-			{isLoading && <CircularProgress className={classes['progress']} />}
-			{!isLoading && (
-				<Box sx={{ overflow: 'hidden' }}>
-					<TableContainer className={classes.container}>
-						<PmDataTableToolbar
-							numSelected={selected.length}
-							openConfirmDialogHandler={handleOpenRemoveMultiProductDialog}
-						/>
-						<Table stickyHeader sx={{ minWidth: 500 }}>
-							<PmDataTableHead
-								rowCount={data.length}
-								numSelect={selected.length}
-								onSelectAllClick={handleSelectAllClick}
-								order={sorts[0].order}
-								orderBy={sorts[0].field.toLowerCase()}
-								onRequestSort={handleRequestSort}
-							/>
-							<TableBody>
-								{data.map((item) => renderItem(item))}
-								{emptyRows > 0 && (
-									<TableRow style={{ height: 53 * emptyRows }}>
-										<TableCell colSpan={productTableColumns.length} />
-									</TableRow>
-								)}
-							</TableBody>
-							<TableFooter>
-								<TableRow>
-									<TablePagination
-										className={classes.pagination}
-										rowsPerPageOptions={tableRowsPerPage}
-										colSpan={productTableColumns.length + 2}
-										count={total}
-										rowsPerPage={rowsPerPage}
-										page={page}
-										SelectProps={{
-											inputProps: {
-												'aria-label': 'rows-per-page'
-											},
-											native: true
-										}}
-										onPageChange={handlePageChange}
-										onRowsPerPageChange={handleRowsPerPageChange}
-										ActionsComponent={TablePaginationActions}
-									/>
-								</TableRow>
-							</TableFooter>
-						</Table>
-						<PmDialog onClose={handleClose} open={open} title="Update product" style={{ padding: '1rem 1.5rem' }}>
-							<PmProductForm
-								data={selectedProduct!!}
-								formState={false}
-								handleClose={handleClose}
-								performPostApiCall={performPostApiCall}
-							/>
-						</PmDialog>
-						<PmRemoveDialog
-							closeHandler={handleCloseRemoveDialog}
-							isOpen={openRemoveDialog}
-							confirmHandler={selectedProduct === null ? handleRemoveMultipleProducts : handleRemoveProduct}
-						/>
-					</TableContainer>
-					<PmSnackbar
-						handleClose={handleCloseSnackbar}
-						open={openSnackbar}
-						severity={isError ? 'error' : 'success'}
-						message={message}
+		<Suspense fallback={<CircularProgress className={classes['progress']} />}>
+			<Box sx={{ overflow: 'hidden' }}>
+				<TableContainer className={classes.container}>
+					<PmDataTableToolbar
+						numSelected={selected.length}
+						openConfirmDialogHandler={handleOpenRemoveMultiProductDialog}
 					/>
-				</Box>
-			)}
-		</>
+					<Table stickyHeader sx={{ minWidth: 500 }}>
+						<PmDataTableHead
+							rowCount={data.length}
+							numSelect={selected.length}
+							onSelectAllClick={handleSelectAllClick}
+							order={sorts[0].order}
+							orderBy={sorts[0].field.toLowerCase()}
+							onRequestSort={handleRequestSort}
+						/>
+						<TableBody>
+							{data.map((item) => renderItem(item))}
+							{emptyRows > 0 && (
+								<TableRow style={{ height: 53 * emptyRows }}>
+									<TableCell colSpan={productTableColumns.length} />
+								</TableRow>
+							)}
+						</TableBody>
+						<TableFooter>
+							<TableRow>
+								<TablePagination
+									className={classes.pagination}
+									rowsPerPageOptions={tableRowsPerPage}
+									labelRowsPerPage={labelRowsPerPage}
+									colSpan={productTableColumns.length + 2}
+									count={total}
+									rowsPerPage={rowsPerPage}
+									page={page}
+									SelectProps={{
+										inputProps: {
+											'aria-label': 'rows-per-page'
+										},
+										native: true
+									}}
+									onPageChange={handlePageChange}
+									onRowsPerPageChange={handleRowsPerPageChange}
+									ActionsComponent={TablePaginationActions}
+								/>
+							</TableRow>
+						</TableFooter>
+					</Table>
+					<PmDialog
+						onClose={handleClose}
+						open={open}
+						title={t('updateProductTitle')}
+						style={{ padding: '1rem 1.5rem' }}
+					>
+						<PmProductForm
+							data={selectedProduct!!}
+							formState={false}
+							handleClose={handleClose}
+							performPostApiCall={performPostApiCall}
+						/>
+					</PmDialog>
+					<PmRemoveDialog
+						closeHandler={handleCloseRemoveDialog}
+						isOpen={openRemoveDialog}
+						title={t('removeProductTitle')}
+						confirmHandler={selectedProduct === null ? handleRemoveMultipleProducts : handleRemoveProduct}
+						actionAccept={t('confirmDeleteAccept')}
+						actionRefuse={t('confirmDeleteRefuse')}
+						contentText={t('productDeleteConfirmation')}
+					/>
+				</TableContainer>
+				<PmSnackbar
+					handleClose={handleCloseSnackbar}
+					open={openSnackbar}
+					severity={isError ? 'error' : 'success'}
+					message={message}
+				/>
+			</Box>
+		</Suspense>
 	);
 };

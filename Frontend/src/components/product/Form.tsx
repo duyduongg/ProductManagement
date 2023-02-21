@@ -13,6 +13,7 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { PmFormCurrencyField } from '../shared/components/form/FormCurrencyField';
 import { PmFormField } from '../shared/components/form/FormField';
 import { PmFormSelect } from '../shared/components/form/FormSelect';
+import { useTranslation } from 'react-i18next';
 
 export interface IFormInput {
 	isCreate: boolean;
@@ -36,7 +37,7 @@ export const PmProductForm = ({ data, formState, handleClose, performPostApiCall
 	const categories: CategoryDto[] = useAppSelector((state) => state.categoryState.data);
 	const ref = useRef();
 	const dispatch = useAppDispatch();
-
+	const { t } = useTranslation();
 	const methods = useForm<IFormInput>({ resolver: yupResolver(productFormSchema) });
 	useEffect(() => {
 		methods.setValue('isCreate', formState);
@@ -61,7 +62,7 @@ export const PmProductForm = ({ data, formState, handleClose, performPostApiCall
 					<div className={classes['form-fields']}>
 						<PmFormField
 							id="name"
-							label="Name"
+							label={t('name')}
 							registeredValue="name"
 							value={data?.name}
 							disabled={data?.name ? true : false}
@@ -69,23 +70,23 @@ export const PmProductForm = ({ data, formState, handleClose, performPostApiCall
 						<PmFormCurrencyField ref={ref} id="price" label="Price" registeredValue="price" value={data?.price} />
 						<PmFormField
 							id="warrantyMonth"
-							label="Warranty month"
+							label={t('warrantyMonth')}
 							registeredValue="warrantyMonth"
 							value={data?.warrantyMonth}
 						/>
 					</div>
 					<div className={classes['form-fields']}>
-						<PmFormField id="stock" label="Stock" registeredValue="stock" value={data?.stock} />
+						<PmFormField id="stock" label={t('stock')} registeredValue="stock" value={data?.stock} />
 						<PmFormSelect
 							id="brand"
-							label="Brand"
+							label={t('brand')}
 							registeredValue="brandId"
 							valueArray={brands}
 							value={data?.brandId ? data?.brandId : brands[0].id}
 						/>
 						<PmFormSelect
 							id="category"
-							label="Category"
+							label={t('brand')}
 							registeredValue="categoryId"
 							valueArray={categories}
 							value={data?.category ? data?.categoryId : categories[0].id}
@@ -99,7 +100,7 @@ export const PmProductForm = ({ data, formState, handleClose, performPostApiCall
 						className={classes['action-button']}
 						startIcon={<CloseIcon />}
 					>
-						Cancel
+						{t('confirmCreateUpdateRefuse')}
 					</Button>
 					<Button
 						type="submit"
@@ -107,7 +108,7 @@ export const PmProductForm = ({ data, formState, handleClose, performPostApiCall
 						className={classes['action-button']}
 						startIcon={formState ? <CreateIcon /> : <SaveIcon />}
 					>
-						{formState ? 'Create' : 'Save'}
+						{t(formState ? 'confirmCreateAccept' : 'confirmUpdateAccept')}
 					</Button>
 				</Box>
 			</form>
