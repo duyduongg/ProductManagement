@@ -1,6 +1,6 @@
 import { authActions } from 'app/reducers/authSlice';
 import { StoreType } from 'app/store';
-import { AxiosResponse, HttpStatusCode, InternalAxiosRequestConfig } from 'axios';
+import { AxiosResponse, InternalAxiosRequestConfig, AxiosError, isAxiosError, HttpStatusCode } from 'axios';
 import api from 'services/apiGateway';
 
 const setupHttpInterceptor = (store: StoreType) => {
@@ -13,20 +13,20 @@ const setupHttpInterceptor = (store: StoreType) => {
 			}
 			return config;
 		},
-		(error) => console.error(error)
+		(error: AxiosError | Error) => console.error(error.message)
 	);
 	api.interceptors.response.use(
 		async (response: AxiosResponse) => {
-			if (response.status === HttpStatusCode.Unauthorized) {
-				store.dispatch(authActions.requestSignin());
-			}
 			return response;
 		},
-		(error) => {
-			if (!error?.response) {
-				console.log(error);
+		(error: AxiosError | Error) => {
+			if (isAxiosError(error)) {
+				if (error.response?.status === HttpStatusCode.Unauthorized) {
+					store.dispatch(authActions.requestSignin());
+				}
+			} else {
+				console.error(error.message);
 			}
-			return Promise.reject(error);
 		}
 	);
 };
