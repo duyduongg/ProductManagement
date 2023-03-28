@@ -4,6 +4,7 @@ This is a personal project I built just to review what I've learnt about ReactJS
 Backend:
 - Use Visual Studio to Open ProductManagement.sln
 - Set Startup Project as Multiple, choose IdentityServer and ProductManagement as startup projects
+- Install Microsoft SLQ Server as well as SQLExpress Server. 
 - Ctrl F5 to run.
 Frontend: Open folder Frontends with VS Code
 - Enter `npm install` to install necessary packages
