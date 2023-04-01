@@ -54,10 +54,9 @@ namespace ProductManagement.Extensions
             var lambdaExpression = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), property.PropertyType),
                 propertyExpression, argumentExpression);
 
-            // Find proper method that has the name equal to sortMethod
-            // Is a generic method definition
-            // Have 2 arguments
-            // Receive 2 parameters
+            // In general, this block of code will look for the methods that has the name of OrderBy(Descending) or ThenBy(Descending)
+            // Check if this method is a generic and has 2 parameters which is the second overload that accept an IComparer<TKey> comparer
+            // And invoke it
             var result = typeof(Queryable).GetMethods().Single(
                 method => method.Name == sortMethod &&
                           method.IsGenericMethodDefinition &&

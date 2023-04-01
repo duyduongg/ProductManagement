@@ -51,7 +51,6 @@ const ProductsPage = () => {
 	};
 
 	const handleSearchProducts: SubmitHandler<ISearchInput> = (data: ISearchInput) => {
-		console.log(data.value);
 		const request = {
 			dataSourceRequest: requestFilterDto.dataSourceRequest,
 			filter: {

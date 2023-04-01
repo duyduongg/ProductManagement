@@ -13,16 +13,16 @@ const setupHttpInterceptor = (store: StoreType) => {
 			}
 			return config;
 		},
-		(error: AxiosError | Error) => console.error(error.message)
+		async (error: AxiosError | Error) => console.error(error.message)
 	);
 	api.interceptors.response.use(
 		async (response: AxiosResponse) => {
 			return response;
 		},
-		(error: AxiosError | Error) => {
+		async (error: AxiosError | Error) => {
 			if (isAxiosError(error)) {
 				if (error.response?.status === HttpStatusCode.Unauthorized) {
-					store.dispatch(authActions.requestSignin());
+					// store.dispatch(authActions.requestSigninSilent());
 				}
 			} else {
 				console.error(error.message);

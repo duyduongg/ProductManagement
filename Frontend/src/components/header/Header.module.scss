@@ -1,5 +1,8 @@
-header {
-	background-color: #d4d4d4;
+@import '../../styles/theme-variable.scss';
+.header {
+	@include themify($themes) {
+		background-color: themed('colorHeader');
+	}
 }
 
 .container {

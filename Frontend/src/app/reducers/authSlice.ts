@@ -8,7 +8,7 @@ interface AuthState {
 	errorMessage: string;
 	user: User | null;
 	isAuthenticated: boolean;
-	authLocalTime: Date;
+	authExpireTime: string | null;
 }
 
 const authSlice = createSlice({
@@ -31,10 +31,23 @@ const authSlice = createSlice({
 			state.isError = true;
 			state.errorMessage = action.payload;
 		},
+		requestSigninSilent: (state) => {
+			state.isLoading = true;
+		},
 		setAuthInfo: (state, action: PayloadAction<User>) => {
 			state.user = action.payload;
 			state.isAuthenticated = true;
-			state.authLocalTime = new Date();
+			state.authExpireTime = new Intl.DateTimeFormat('en-EN', {
+				dateStyle: 'full',
+				timeStyle: 'long',
+				timeZone: 'Asia/Jakarta'
+			}).format(new Date(action.payload.expires_at * 1000));
+		},
+		clearAuthInfo: (state) => {
+			state.user = null;
+			state.isAuthenticated = false;
+			state.authExpireTime = null;
+			localStorage.removeItem('persist:auth');
 		}
 	}
 });
@@ -42,9 +55,10 @@ const authSlice = createSlice({
 const authPersistConfig = {
 	key: 'auth',
 	storage,
-	whitelist: ['user', 'isAuthenticated', 'authLocalTime']
+	whitelist: ['user', 'isAuthenticated', 'authExpireTime']
 };
 
-export const { requestSignin, completeSignin, failedSignin } = authSlice.actions;
+export const { requestSignin, completeSignin, failedSignin, requestSigninSilent, setAuthInfo, clearAuthInfo } =
+	authSlice.actions;
 export const authActions = authSlice.actions;
 export const authState = persistReducer(authPersistConfig, authSlice.reducer);

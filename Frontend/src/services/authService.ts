@@ -69,7 +69,10 @@ export default class AuthService {
 	};
 
 	signinSilentCallback = () => {
-		this.userManager.signinSilentCallback();
+		this.userManager
+			.signinSilentCallback()
+			.then((user: User | undefined) => {})
+			.catch((err) => this.signinSilent());
 	};
 
 	isAuthenticated = () => {

@@ -1,3 +1,7 @@
+@import '../../../../styles/theme-variable.scss';
 .lang-button {
-	color: black !important;
+	@include themify($themes) {
+		color: themed('colorText');
+	}
+	border-radius: 5px !important;
 }
